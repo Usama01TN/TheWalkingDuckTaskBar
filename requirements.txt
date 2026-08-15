@@ -1,0 +1,2 @@
+PyQt5
+git+https://github.com/Usama01TN/ManyQt
