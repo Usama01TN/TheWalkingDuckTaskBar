@@ -5,13 +5,11 @@ builder.py
 Interactive/CLI builder that packages TheWalkingDuckTaskBar project
 (main.py + mainwindow.py + walkingduck.py + __init__.py) into a single,
 compressed, standalone Windows .exe using either PyInstaller or Nuitka.
-
 TheWalkingDuckTaskBar is a PyQt5 (via the ManyQt compatibility layer) GUI toy
 that waddles the window's taskbar button across the real Windows taskbar and
 quacks on every step. Because it is a GUI app -- not a console tool -- it is
 built WINDOWED (no console) by DEFAULT. Pass --console only if you want a
 visible console window for debugging.
-
 Must be run on WINDOWS with a Python interpreter matching the target
 architecture (building a Windows exe on Linux/macOS is not supported by
 either tool in --onefile mode). The interpreter must be 64-bit so the bundled
@@ -25,7 +23,6 @@ Non-interactive:
     python builder.py --tool pyinstaller
     python builder.py --tool nuitka --console
     python builder.py --tool nuitka --upx --icon duck.ico
-
 Options:
 -------
     --tool {pyinstaller,nuitka}   Skip the interactive prompt.
