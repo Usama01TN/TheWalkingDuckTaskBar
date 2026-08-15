@@ -89,8 +89,8 @@ Notes on TTLib / size / optimization:
 """
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from os.path import dirname, abspath, join, getsize, isfile
-from sys import executable, exit, platform
 from os import getcwd, makedirs, name, pathsep
+from sys import executable, exit, platform
 from sysconfig import get_platform
 from pip import _internal
 from shutil import move
@@ -392,7 +392,7 @@ def parseArgs(argv):
                    help="Folder containing the project's .py files.")
     p.add_argument('--dist-dir', default=join(getcwd(), 'dist'),
                    help='Output folder for the built exe.')
-    p.add_argument('--icon', default=None, help='Optional .ico file.')
+    p.add_argument('--icon', default=join(dirname(__file__), 'duck.ico'), help='Optional .ico file.')
     p.add_argument('--ttlib', default=None,
                    help='Path to TTLib64.dll to bundle (auto-detected in --source-dir).')
     p.add_argument('--sound', default=None,
