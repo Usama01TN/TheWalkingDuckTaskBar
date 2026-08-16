@@ -6,7 +6,7 @@ TheWalkingDuckTaskBar is a playful PyQt desktop toy that physically reorders you
 
 ## 🎬 Demo:
 
-[![TheWalkingDuckTaskBar demo](banner.jpg)](https://youtu.be/FGZwDOqFLUc)
+[![TheWalkingDuckTaskBar demo](banner.png)](https://youtu.be/FGZwDOqFLUc)
 
 ▶️ *Click the image to watch the duck waddle across the taskbar on YouTube.*
 
