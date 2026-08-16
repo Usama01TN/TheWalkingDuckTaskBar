@@ -1,0 +1,74 @@
+name: Build Windows EXE
+# When to run: on every push to the main branch, and on demand from the
+# Actions tab (workflow_dispatch). Add tags here later if you want tagged builds.
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    # MUST be Windows. PyInstaller/Nuitka --onefile cannot cross-compile a
+    # native Windows .exe from Linux or macOS. windows-latest is 64-bit, which
+    # is required so the bundled TTLib64.dll matches explorer.exe's bitness.
+    runs-on: windows-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Optional: UPX shrinks the final exe by ~40-60%. builder.py auto-detects
+      # it on PATH. It's a nice-to-have, so never let it fail the build.
+      - name: Install UPX (optional)
+        run: choco install upx -y
+        continue-on-error: true
+
+      # TheWalkingDuckTaskBar loads TTLib64.dll at runtime (via ctypes) to move
+      # the taskbar button. builder.py bundles it INTO the onefile exe, but only
+      # if it finds TTLib64.dll next to builder.py. So download the official
+      # TTLib.zip, extract just the 64-bit DLL, and drop it in the repo root.
+      - name: Download and extract TTLib64.dll
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Write-Host 'Downloading TTLib.zip...'
+          Invoke-WebRequest -Uri 'https://ramensoftware.com/downloads/TTLib.zip' `
+                            -OutFile 'TTLib.zip' -UseBasicParsing
+          Write-Host 'Extracting...'
+          Expand-Archive -Path 'TTLib.zip' -DestinationPath 'TTLib_extracted' -Force
+          # The DLL lives at TTLib/bin/TTLib64.dll inside the archive.
+          Copy-Item -Path 'TTLib_extracted\TTLib\bin\TTLib64.dll' `
+                    -Destination 'TTLib64.dll' -Force
+          # Clean up the intermediate files so they don't clutter the checkout.
+          Remove-Item 'TTLib.zip' -Force
+          Remove-Item 'TTLib_extracted' -Recurse -Force
+
+      # Fail loudly if the DLL isn't where builder.py expects it: otherwise the
+      # build would "succeed" but produce an exe that can't touch the taskbar.
+      - name: Verify TTLib64.dll is present
+        shell: pwsh
+        run: |
+          if (-not (Test-Path 'TTLib64.dll')) {
+            Write-Error 'TTLib64.dll was not extracted to the repo root.'
+            exit 1
+          }
+          Write-Host ('Found TTLib64.dll ({0} bytes).' -f (Get-Item 'TTLib64.dll').Length)
+
+      # builder.py pip-installs PyQt5/ManyQt and PyInstaller itself, bundles
+      # TTLib64.dll (and quack.mp3/quack.wav if present), and produces a
+      # windowed GUI exe at dist\TheWalkingDuckTaskBar.exe.
+      # NOTE: do NOT add --skip-install here (builder detects the backend by the
+      # lowercase name 'pyinstaller' and would wrongly think it's missing).
+      - name: Build the exe with builder.py
+        run: python builder.py --tool pyinstaller --yes
+
+      - name: Upload the exe as a build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TheWalkingDuckTaskBar-exe
+          path: dist/TheWalkingDuckTaskBar.exe
+          if-no-files-found: error
