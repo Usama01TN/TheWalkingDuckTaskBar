@@ -4,6 +4,12 @@
 
 TheWalkingDuckTaskBar is a playful PyQt desktop toy that physically reorders your window's taskbar button, one slot at a time, using the [7+ Taskbar Tweaking Library (TTLib)](https://ramensoftware.com/7-taskbar-tweaking-library). While the button "walks" left or right across the taskbar, the window icon plays an animated cartoon duck walk cycle (drawn entirely with Qt - no image assets needed), and a real audio file of your choice quacks on every slot it steps across.
 
+## 🎬 Demo:
+
+[![TheWalkingDuckTaskBar demo](banner.jpg)](https://youtu.be/FGZwDOqFLUc)
+
+▶️ *Click the image to watch the duck waddle across the taskbar on YouTube.*
+
 ---
 
 ## ✨ Features:
