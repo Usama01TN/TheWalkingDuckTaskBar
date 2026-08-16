@@ -37,7 +37,7 @@ except Exception:
     HAVE_MULTIMEDIA = False  # type: bool
 
 MAX_APPID_LENGTH = 260  # type: int # MAX_PATH, per TTLib.h
-SetCurrentProcessExplicitAppUserModelID = windll.shell32.SetCurrentProcessExplicitAppUserModelID
+SetCurrentProcessExplicitAppUserModelID = windll.shell32.SetCurrentProcessExplicitAppUserModelID if platform == 'win32' else None
 
 
 # ---------------------------------------------------------------------------
@@ -188,12 +188,12 @@ class TaskbarMover(object):
         if platform != 'win32':
             raise TTLibError('This feature only works on Windows.')
         dllName = 'TTLib{}.dll'.format(64 if sizeof(c_void_p) == 8 else 32)  # type: str
-        dllPath = join(dirname(abspath(__file__)), dllName)  # type: str
-        if not exists(dllPath):
+        dllPath = join(dirname(__file__), dllName)  # type: str
+        if not (exists(dllPath) or exists(dllName)):
             raise TTLibError(
                 '{} not found next to this script.\nDownload TTLib.zip from ramensoftware.com and copy {} here.'.format(
                     dllName, dllName))
-        self.__m_lib = WinDLL(dllPath)  # TTLib is __stdcall -> WinDLL
+        self.__m_lib = WinDLL(dllPath if exists(dllPath) else dllName)  # TTLib is __stdcall -> WinDLL
         self._declare()
         self.__m_loaded = False  # type: bool
 
