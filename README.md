@@ -40,6 +40,7 @@ git clone https://github.com/<you>/TheWalkingDuckTaskBar.git
 cd TheWalkingDuckTaskBar
 # 2. Install dependencies (64-bit Python!)
 pip install PyQt5
+pip install git+https://github.com/Usama01TN/ManyQt
 # 3. Download TTLib.zip from ramensoftware.com and copy
 #    TTLib64.dll into the project folder, next to main.py
 ```
